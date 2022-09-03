@@ -20,23 +20,48 @@ FROM devices d GROUP BY hour,device_id ;  '''
     print(result)
 
 def total_distance(pg_engine,mysql_engine):
-    filter_columns_query = '''with distance as ( SELECT cast(a.location::json->>'longitude' as decimal) as Longitude_a,
-cast(a.location::json->>'latitude' as decimal) as Latitude_a,
-cast(b.location::json->>'longitude' as decimal) as Longitude_b,
-cast(b.location::json->>'latitude' as decimal) as Latitude_b,
-a.device_id as device_id ,
-extract(hour from (to_timestamp(a.time::numeric))) as hour
-FROM devices AS a
-JOIN devices AS b ON a.device_id = b.device_id limit 10 )
+    filter_columns_query = '''
+    with data_with_starting_ending_times AS (
+    SELECT
+        d.device_id, EXTRACT(hour from (TO_TIMESTAMP(d.time::numeric))) AS hour, MIN(d.time) AS starting_time, MAX(d.time) AS ending_time
+    FROM devices d GROUP BY d.device_id,hour
+),
 
-select  device_id,hour,111.111 *
-    DEGREES(ACOS(LEAST(1.0, COS(RADIANS(Latitude_a))
-         * COS(RADIANS(Latitude_b))
-         * COS(RADIANS(Longitude_a - Longitude_b))
-         + SIN(RADIANS(Latitude_a))
-         * SIN(RADIANS(Latitude_b))))) AS distance_in_km
-         
-         from distance group by hour,device_id,distance_in_km ;
+data_with_starting_location AS (
+    SELECT
+        d.location, d.device_id, ag.hour
+    FROM devices d
+        JOIN data_with_starting_ending_times ag on d.device_id=ag.device_id AND d.time=ag.starting_time
+),
+
+data_with_ending_location AS (
+    SELECT
+        d.location, d.device_id, ag.hour
+    FROM devices d
+        JOIN data_with_starting_ending_times ag on d.device_id=ag.device_id AND d.time=ag.ending_time
+),
+
+aggregated_data AS (
+    SELECT
+        s.device_id,
+        s.hour,
+        cast(s.location::json->>'longitude' as decimal) as starting_longitude,
+        cast(s.location::json->>'latitude' as decimal) as starting_latitude,
+        cast(e.location::json->>'longitude' as decimal) as ending_longitude,
+        cast(e.location::json->>'latitude' as decimal) as ending_latitude
+    FROM data_with_starting_location s JOIN data_with_ending_location e ON s.device_id=e.device_id AND s.hour=e.hour
+)
+
+SELECT
+    device_id,
+    hour,
+    111.111 *
+    DEGREES(ACOS(LEAST(1.0, COS(RADIANS(starting_latitude))
+         * COS(RADIANS(ending_latitude))
+         * COS(RADIANS(starting_longitude - ending_longitude))
+         + SIN(RADIANS(starting_latitude))
+         * SIN(RADIANS(ending_latitude))))) AS distance_in_km
+FROM aggregated_data;
 
  '''
     result=pg_engine.execute(filter_columns_query)
