@@ -1,5 +1,5 @@
 ### Database Login Page ###
-<img width="989" alt="image" src="https://user-images.githubusercontent.com/31180223/175987008-88ffdb3b-cc04-4c03-9432-25df8e2b6c62.png">
+<img width="989" alt="image" src="https://user-images.githubusercontent.com/33934146/188298665-47f1b900-46f6-41f5-8a35-6108a2cafa57.jpeg">
 
 
 ### Staging Tables ###
