@@ -2,22 +2,26 @@
 def max_temp(pg_engine,mysql_engine):
     filter_columns_query = '''SELECT d.device_id,extract(hour from (to_timestamp(d.time::numeric))) as hour, MAX(d.temperature) as temperature
 FROM devices d GROUP BY hour,device_id '''
+    #storing data in mysql db
     result=pg_engine.execute(filter_columns_query)
+    print(result)
+    mysql_engine.execute("CREATE TABLE IF NOT EXISTS max_temp (device_id VARCHAR(255), hour integer, temperature integer)")
     for row in result.fetchall():
         mysql_engine.execute("INSERT INTO max_temp (device_id,hour,temperature) VALUES (%s, %s, %s)", \
                              (row['device_id'], row['hour'], row['temperature']))
-    print(result)
+
 
 def count_data(pg_engine,mysql_engine):
     filter_columns_query = '''SELECT d.device_id,extract(hour from (to_timestamp(d.time::numeric))) as hour, count(1) as data_count
 FROM devices d GROUP BY hour,device_id ;  '''
+    #storing data in mysql db
     result=pg_engine.execute(filter_columns_query)
+    mysql_engine.execute("CREATE TABLE IF NOT EXISTS count_data (device_id VARCHAR(255), hour integer, data_count integer)")
     for row in result.fetchall():
         mysql_engine.execute("INSERT INTO count_data (device_id,hour,data_count) VALUES (%s, %s, %s)", \
                         (row['device_id'], row['hour'], row['data_count']))
 
 
-    print(result)
 
 def total_distance(pg_engine,mysql_engine):
     filter_columns_query = '''
@@ -65,10 +69,13 @@ FROM aggregated_data;
 
  '''
     result=pg_engine.execute(filter_columns_query)
+    print(result)
+    #storing data in mysql db
+    mysql_engine.execute("CREATE TABLE IF NOT EXISTS total_distance (device_id VARCHAR(255), hour integer, distance_in_km integer)")
 
     for row in result.fetchall():
         mysql_engine.execute("INSERT INTO total_distance (device_id,hour,distance_in_km) VALUES (%s, %s, %s)", \
                              (row['device_id'], row['hour'], row['distance_in_km']))
 
-    print(result)
+
 
