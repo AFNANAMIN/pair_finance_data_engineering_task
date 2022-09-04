@@ -1,17 +1,14 @@
-### Database Login Page ###
+### The amount of data points aggregated for every device per hours. ###
 <img width="989" alt="image" src="https://user-images.githubusercontent.com/33934146/188298665-47f1b900-46f6-41f5-8a35-6108a2cafa57.jpeg">
 
 
-### Staging Tables ###
-<img width="963" alt="image" src="https://user-images.githubusercontent.com/31180223/175987093-e16b073e-0133-4bb5-86aa-459af7d24095.png">
+### The maximum temperatures measured for every device per hours. ###
+<img width="963" alt="image" src="https://user-images.githubusercontent.com/33934146/188298766-3b55bfd7-5b6c-4a9d-9c56-f045c0e045c3.jpeg">
 
-### Data in staging tables ###
+### Total distance of device movement for every device per hours. ###
 
-<img width="1189" alt="image" src="https://user-images.githubusercontent.com/31180223/175987225-13d57d06-26f9-4042-905e-f357703f3dc8.png">
-<img width="1266" alt="image" src="https://user-images.githubusercontent.com/31180223/175987439-a68ddb96-5c7a-44ae-b5dd-a1ea7e3598ac.png">
+<img width="1189" alt="image" src="https://user-images.githubusercontent.com/33934146/188298785-ad9d0e58-4428-4ebb-bd97-6b428dd60762.jpeg">
 
-### Structured Result ###
-<img width="632" alt="image" src="https://user-images.githubusercontent.com/31180223/175987534-810e9d00-a905-49d4-94e7-aff2bd6a2b39.png">
 
 
 
